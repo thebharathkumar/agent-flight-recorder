@@ -82,6 +82,13 @@ def test_file_exporter_output_feeds_converter(otel):
     assert all(int(e["event_id"], 16) for e in events)
 
 
+def test_configure_otel_attaches_grpc_exporter_when_endpoint_set(tmp_path):
+    provider = configure_otel("endpoint-test", otlp_endpoint="http://localhost:59999")
+    processors = provider._active_span_processor._span_processors
+    assert processors, "expected a batch processor for the grpc exporter"
+    provider.shutdown()
+
+
 def test_compose_and_collector_config_parse():
     assets = ROOT / "skills" / "otel-agent-tracing" / "assets"
     compose = yaml.safe_load((assets / "docker-compose.yml").read_text())

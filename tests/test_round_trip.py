@@ -15,7 +15,8 @@ ROOT = Path(__file__).resolve().parent.parent
 APP = ROOT / "examples" / "two-agent-app" / "app.py"
 CONVERTER = ROOT / "skills" / "trace-triage" / "scripts" / "otlp_to_triage.py"
 GOLDEN = ROOT / "tests" / "golden" / "round_trip_report.md"
-ENV = {"PATH": "/usr/bin:/bin", "AUDIT_CHAIN_KEY": "round-trip-key"}
+# inherit the environment so pytest-cov's subprocess hook stays active
+ENV = {**os.environ, "AUDIT_CHAIN_KEY": "round-trip-key"}
 
 
 def normalize(report: str) -> str:

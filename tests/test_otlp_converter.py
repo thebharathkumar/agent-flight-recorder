@@ -98,6 +98,18 @@ def test_map_override(tmp_path):
     assert by_id(events, "0000000000000001")["agent_id"] == "overridden"
 
 
+def test_array_attributes_and_dotted_exception_types():
+    doc = json.loads(FIXTURE.read_text())
+    span = doc["resourceSpans"][0]["scopeSpans"][0]["spans"][1]
+    span["attributes"].append(
+        {"key": "tags", "value": {"arrayValue": {"values": [{"stringValue": "a"},
+                                                            {"intValue": "2"}]}}}
+    )
+    span["events"][0]["attributes"][0]["value"]["stringValue"] = "somepkg.TimeoutError"
+    events, _ = convert(doc)
+    assert by_id(events, "0000000000000002")["failure_classification"] == "information_lag"
+
+
 def test_cli_writes_ndjson_and_reports_counts(tmp_path):
     out = tmp_path / "events.ndjson"
     result = subprocess.run(
@@ -109,6 +121,28 @@ def test_cli_writes_ndjson_and_reports_counts(tmp_path):
     assert len(lines) == 4
     assert "mapped 4 spans" in result.stderr
     assert "skipped 1" in result.stderr
+
+
+def test_main_inprocess_jsonl_input_and_unclassified_warning(tmp_path, monkeypatch, capsys):
+    import otlp_to_triage
+
+    span = {
+        "traceId": "cc" * 16, "spanId": "0000000000000009", "name": "step",
+        "startTimeUnixNano": "1", "endTimeUnixNano": "2000001",
+        "attributes": [], "status": {"code": 2},
+    }
+    doc = {"resourceSpans": [{"resource": {"attributes": []},
+                              "scopeSpans": [{"spans": [span]}]}]}
+    source = tmp_path / "capture.json"
+    source.write_text(json.dumps(doc) + "\n" + json.dumps(doc) + "\n")
+    out = tmp_path / "events.ndjson"
+    monkeypatch.setattr(
+        sys, "argv", ["otlp_to_triage.py", str(source), "-o", str(out)]
+    )
+    assert otlp_to_triage.main() == 0
+    err = capsys.readouterr().err
+    assert "mapped 2 spans" in err
+    assert "warning:" in err and "unclassified" in err
 
 
 def test_events_load_into_triage(tmp_path, events):

@@ -1,6 +1,7 @@
 """Example app: determinism, verifiable audit chain, classified failure variety."""
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -14,11 +15,11 @@ from verify_chain import verify  # noqa: E402
 
 
 def run_app(tmp_path, *args):
+    # inherit the environment so pytest-cov's subprocess hook stays active
+    env = {**os.environ, "AUDIT_CHAIN_KEY": "example-key"}
     return subprocess.run(
         [sys.executable, str(APP), *args],
-        capture_output=True, text=True, cwd=tmp_path,
-        env={"PATH": "/usr/bin:/bin", "AUDIT_CHAIN_KEY": "example-key",
-             "PYTHONPATH": str(ROOT)},
+        capture_output=True, text=True, cwd=tmp_path, env=env,
     )
 
 
@@ -65,6 +66,23 @@ def test_run_query_entrypoint_is_deterministic(tmp_path):
     assert set(a) == {"plan", "answer"}
 
 
+def test_main_inprocess_with_audit(tmp_path, monkeypatch, capsys):
+    sys.path.insert(0, str(APP.parent))
+    try:
+        import app
+    finally:
+        sys.path.pop(0)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("AUDIT_CHAIN_KEY", "example-key")
+    monkeypatch.setattr(sys, "argv", ["app.py", "--runs", "4", "--seed", "1", "--audit"])
+    assert app.main() == 0
+    out = capsys.readouterr().out
+    assert out.count("run-") == 4
+    assert (tmp_path / "audit").exists()
+    # the trace wrapper factory is importable without turning tracing on
+    assert callable(app.make_wrapper(True)("planner"))
+
+
 def test_trace_flag_writes_otlp_json(tmp_path):
     result = run_app(tmp_path, "--runs", "4", "--seed", "42", "--trace")
     assert result.returncode == 0, result.stderr
@@ -75,10 +93,10 @@ def test_trace_flag_writes_otlp_json(tmp_path):
 
 
 def test_dev_key_warning_when_env_missing(tmp_path):
+    env = {k: v for k, v in os.environ.items() if k != "AUDIT_CHAIN_KEY"}
     result = subprocess.run(
         [sys.executable, str(APP), "--runs", "1", "--audit"],
-        capture_output=True, text=True, cwd=tmp_path,
-        env={"PATH": "/usr/bin:/bin", "PYTHONPATH": str(ROOT)},
+        capture_output=True, text=True, cwd=tmp_path, env=env,
     )
     assert result.returncode == 0
     assert "WARNING" in result.stderr

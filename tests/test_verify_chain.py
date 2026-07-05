@@ -1,6 +1,7 @@
 """Verifier attack suite, ported from claimtrace and extended with anchor and key checks."""
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -91,10 +92,11 @@ def test_wrong_key_fails(chain):
 
 
 def run_cli(args, env_key="test-key"):
+    # inherit the environment so pytest-cov's subprocess hook stays active
+    env = {**os.environ, "AUDIT_CHAIN_KEY": env_key}
     return subprocess.run(
         [sys.executable, str(SCRIPTS / "verify_chain.py"), *map(str, args)],
-        capture_output=True, text=True,
-        env={"PATH": "/usr/bin:/bin", "AUDIT_CHAIN_KEY": env_key},
+        capture_output=True, text=True, env=env,
     )
 
 
@@ -131,6 +133,39 @@ def test_cli_broken_chain_exits_1(chain):
     result = run_cli([chain])
     assert result.returncode == 1
     assert "seq 0" in result.stdout + result.stderr
+
+
+def test_main_inprocess_exit_codes(chain, monkeypatch):
+    import verify_chain
+
+    monkeypatch.setenv("AUDIT_CHAIN_KEY", "test-key")
+    monkeypatch.setattr(sys, "argv", ["verify_chain.py", str(chain)])
+    assert verify_chain.main() == 0
+    monkeypatch.setattr(sys, "argv", ["verify_chain.py", str(chain), "--require-anchor"])
+    assert verify_chain.main() == 0
+
+    Path(str(chain) + ".head.json").unlink()
+    monkeypatch.setattr(sys, "argv", ["verify_chain.py", str(chain), "--require-anchor"])
+    assert verify_chain.main() == 2
+
+
+def test_main_inprocess_demo_tamper(chain, tmp_path, monkeypatch):
+    import verify_chain
+
+    copy = tmp_path / "c.jsonl"
+    shutil.copy(chain, copy)
+    shutil.copy(str(chain) + ".head.json", str(copy) + ".head.json")
+    monkeypatch.setenv("AUDIT_CHAIN_KEY", "test-key")
+    monkeypatch.setattr(sys, "argv", ["verify_chain.py", str(copy), "--demo-tamper"])
+    assert verify_chain.main() == 1
+
+
+def test_resume_over_blank_only_file(tmp_path):
+    path = tmp_path / "blank.jsonl"
+    path.write_text("\n\n")
+    logger = ChainedLogger(path, run_id="r", key=KEY)
+    entry = logger.append(actor="a", action="x", payload={})
+    assert entry["seq"] == 0
 
 
 def test_cli_demo_tamper_roundtrip(chain, tmp_path):

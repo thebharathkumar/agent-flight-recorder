@@ -1,5 +1,6 @@
 """The eval scaffold generates a passing, deterministic suite on the example app."""
 
+import os
 import shutil
 import subprocess
 import sys
@@ -39,8 +40,7 @@ def app_copy(tmp_path):
 def run_evals(target: Path, *extra):
     return subprocess.run(
         [sys.executable, "-m", "pytest", "evals/", "-p", "no:cacheprovider", *extra],
-        capture_output=True, text=True, cwd=target,
-        env={"PATH": "/usr/bin:/bin"},
+        capture_output=True, text=True, cwd=target, env={**os.environ},
     )
 
 
