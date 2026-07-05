@@ -87,8 +87,9 @@ skill, including what an attacker with the key can still do.
 SDK setup template, a per-node span wrapper for LangGraph, and a docker
 compose stack (OTel Collector, Jaeger, Grafana preprovisioned). Emits
 OpenTelemetry semantic conventions, including the MCP attributes and the
-four `mcp.*.duration` histograms that a 2026 audit of public MCP
-instrumentations found nobody ships. Includes an OTLP JSON file exporter so
+four `mcp.*.duration` histograms that
+[mcp-otel-audit](https://github.com/thebharathkumar/mcp-otel-audit), my
+audit of public MCP instrumentations, found nobody ships. Includes an OTLP JSON file exporter so
 everything also works with no docker at all.
 
 ### agent-eval-scaffold
