@@ -1,0 +1,16 @@
+{
+  "name": "agent-flight-recorder",
+  "owner": {
+    "name": "Bharath Kumar"
+  },
+  "description": "Skills that give any agent project observability and a tamper-evident audit trail by default.",
+  "plugins": [
+    {
+      "name": "flight-recorder",
+      "source": "./",
+      "description": "Hash-chained audit logs, OpenTelemetry agent tracing, deterministic eval scaffolding, and OTLP failure triage.",
+      "license": "MIT",
+      "keywords": ["observability", "audit", "opentelemetry", "evals"]
+    }
+  ]
+}

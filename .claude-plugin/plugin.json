@@ -1,0 +1,22 @@
+{
+  "name": "flight-recorder",
+  "displayName": "Agent Flight Recorder",
+  "version": "0.1.0",
+  "description": "Observability and tamper-evident audit trails for agent projects: hash-chained audit logs, OpenTelemetry tracing, deterministic evals, and failure triage.",
+  "author": {
+    "name": "Bharath Kumar",
+    "url": "https://github.com/thebharathkumar"
+  },
+  "repository": "https://github.com/thebharathkumar/agent-flight-recorder",
+  "license": "MIT",
+  "keywords": [
+    "observability",
+    "opentelemetry",
+    "audit",
+    "tamper-evident",
+    "evals",
+    "langgraph",
+    "mcp",
+    "triage"
+  ]
+}
