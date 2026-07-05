@@ -1,0 +1,3 @@
+{"id": "smoke-release-notes", "input": "release notes", "expected": "release notes"}
+{"id": "smoke-error-budget", "input": "error budget", "expected": "error budget"}
+{"id": "smoke-user-churn", "input": "user churn", "expected": "user churn"}
