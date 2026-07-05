@@ -6,24 +6,24 @@ Output demo.gif
 Set FontSize 15
 Set Width 1200
 Set Height 650
-Set TypingSpeed 40ms
+Set TypingSpeed 15ms
 
 Type "export AUDIT_CHAIN_KEY=demo-key"
 Enter
-Sleep 500ms
+Sleep 300ms
 
 Type "python examples/two-agent-app/app.py --runs 5 --seed 42 --audit"
 Enter
-Sleep 4s
+Sleep 3s
 
 Type "python skills/audit-log/scripts/verify_chain.py audit/run-000.jsonl"
 Enter
-Sleep 3s
+Sleep 2500ms
 
-Type "cp audit/run-000.jsonl /tmp/tampered.jsonl && cp audit/run-000.jsonl.head.json /tmp/tampered.jsonl.head.json"
+Type "cp audit/run-000.jsonl /tmp/t.jsonl && cp audit/run-000.jsonl.head.json /tmp/t.jsonl.head.json"
 Enter
-Sleep 1s
+Sleep 700ms
 
-Type "python skills/audit-log/scripts/verify_chain.py /tmp/tampered.jsonl --demo-tamper"
+Type "python skills/audit-log/scripts/verify_chain.py /tmp/t.jsonl --demo-tamper"
 Enter
 Sleep 4s

@@ -1,12 +1,10 @@
 # agent-flight-recorder
 
-<!-- demo GIF placeholder: record with the commands below, then commit demo.gif -->
 ![demo](demo.gif)
 
-> Record the demo: `brew install vhs` (or see https://github.com/charmbracelet/vhs),
-> then from the repo root with the example requirements installed run `vhs demo.tape`.
-> The tape runs the example app with audit logging, verifies the hash chain, then
-> tampers with a copy and shows the verifier catching it.
+> The demo: the example app runs with audit logging, the hash chain verifies,
+> then a tampered copy gets caught. Re-record it with `brew install vhs` and
+> `vhs demo.tape` from the repo root with the example requirements installed.
 
 Claude Code skills that give any agent project observability and a
 tamper-evident audit trail by default. Install the pack, point a skill at

@@ -10,7 +10,9 @@ def tracked_files():
     out = subprocess.run(
         ["git", "ls-files"], capture_output=True, text=True, cwd=ROOT, check=True
     ).stdout
-    return [ROOT / line for line in out.splitlines() if (ROOT / line).is_file()]
+    paths = [ROOT / line for line in out.splitlines() if (ROOT / line).is_file()]
+    # text files only: binary blobs (the demo gif) can alias any byte sequence
+    return [p for p in paths if b"\x00" not in p.read_bytes()[:1024]]
 
 
 EM_DASH = "\u2014"
