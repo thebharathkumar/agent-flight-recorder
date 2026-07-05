@@ -1,0 +1,39 @@
+# Local observability stack for agent tracing.
+# Usage: docker compose -f docker-compose.yml up -d
+#   Jaeger UI:  http://localhost:16686
+#   Grafana:    http://localhost:3000 (anonymous admin, Jaeger datasource preloaded)
+#   OTLP in:    grpc localhost:4317, http localhost:4318
+# The collector also mirrors every span to ./captures/otlp.json for the
+# trace-triage skill.
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.115.1
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+      - ./captures:/captures
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    depends_on:
+      - jaeger
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.62.0
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686"
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      - ./grafana-provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - jaeger
