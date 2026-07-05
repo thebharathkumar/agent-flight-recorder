@@ -22,7 +22,7 @@ def normalize(report: str) -> str:
     """Drop the wall-clock header line; normalize punctuation that agent-triage
     puts in its canned prose so the committed golden stays free of em dashes."""
     lines = [line for line in report.splitlines() if not line.startswith("Generated:")]
-    return "\n".join(lines).replace("—", "-") + "\n"
+    return "\n".join(lines).replace("\u2014", "-") + "\n"
 
 
 @pytest.fixture(scope="module")
