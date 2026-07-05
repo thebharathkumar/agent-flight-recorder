@@ -10,4 +10,4 @@ cov:
 	uv run pytest --cov=skills --cov=examples --cov-report=term-missing --cov-fail-under=90
 
 validate:
-	claude plugin validate . --marketplace
+	claude plugin validate . --strict
