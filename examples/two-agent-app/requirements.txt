@@ -1,0 +1,5 @@
+langgraph>=1.2,<2
+
+# only needed for --trace:
+# opentelemetry-sdk>=1.30,<2
+# opentelemetry-exporter-otlp-proto-grpc>=1.30,<2
