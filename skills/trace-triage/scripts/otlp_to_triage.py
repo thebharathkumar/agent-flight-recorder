@@ -147,7 +147,8 @@ def convert(
             "failure_classification": (
                 None if succeeded else _classify(span, attrs, attr_map, exception_map)
             ),
-            "latency_ms": {"total": round((end - start) / 1e6, 3)},
+            # agent-triage's schema wants whole milliseconds
+            "latency_ms": {"total": int(round((end - start) / 1e6))},
         }
         if mcp_method:
             event["mcp_method"] = mcp_method

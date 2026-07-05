@@ -82,7 +82,9 @@ def test_explicit_classification_attribute_wins():
 
 
 def test_latency_from_span_duration(events):
-    assert by_id(events, "0000000000000002")["latency_ms"]["total"] == 1500.0
+    latency = by_id(events, "0000000000000002")["latency_ms"]["total"]
+    assert latency == 1500
+    assert isinstance(latency, int), "agent-triage rejects fractional milliseconds"
 
 
 def test_map_override(tmp_path):
