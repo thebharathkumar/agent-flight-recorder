@@ -6,6 +6,13 @@
 > then a tampered copy gets caught. Re-record it with `brew install vhs` and
 > `vhs demo.tape` from the repo root with the example requirements installed.
 
+<!-- brag:start -->
+<p align="center">
+  <a href="https://github.com/thebharathkumar/agent-flight-recorder/blob/HEAD/docs/brag/agent-flight-recorder.mp4"><img src="https://raw.githubusercontent.com/thebharathkumar/agent-flight-recorder/HEAD/docs/brag/agent-flight-recorder.gif" alt="agent-flight-recorder: 15-second technical brief" width="100%"></a>
+</p>
+<p align="center"><sub>15-second technical brief. <a href="https://github.com/thebharathkumar/agent-flight-recorder/blob/HEAD/docs/brag/agent-flight-recorder.mp4">Full MP4 with sound</a> &middot; more at <a href="https://thebharath.co">thebharath.co</a></sub></p>
+<!-- brag:end -->
+
 Claude Code skills that give any agent project observability and a
 tamper-evident audit trail by default. Install the pack, point a skill at
 your repo, and Claude wires it in.
