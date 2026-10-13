@@ -31,7 +31,7 @@ def report(tmp_path_factory):
     workdir = tmp_path_factory.mktemp("roundtrip")
     run = subprocess.run(
         [sys.executable, str(APP), "--runs", "10", "--seed", "42", "--trace"],
-        capture_output=True, text=True, cwd=workdir, env=ENV,
+        capture_output=True, text=True, check=False, cwd=workdir, env=ENV,
     )
     assert run.returncode == 0, run.stderr
     capture = workdir / "captures" / "otlp.json"
@@ -39,7 +39,7 @@ def report(tmp_path_factory):
 
     convert = subprocess.run(
         [sys.executable, str(CONVERTER), "captures/otlp.json", "-o", "events.ndjson"],
-        capture_output=True, text=True, cwd=workdir, env=ENV,
+        capture_output=True, text=True, check=False, cwd=workdir, env=ENV,
     )
     assert convert.returncode == 0, convert.stderr
     assert "skipped 0" in convert.stderr, "default mapping must cover every pack span"
@@ -47,7 +47,7 @@ def report(tmp_path_factory):
     # relative path: the report embeds it in its Sources line
     triage = subprocess.run(
         [str(Path(sys.executable).parent / "triage"), "report", "events.ndjson", "--top", "5"],
-        capture_output=True, text=True, cwd=workdir, env=ENV,
+        capture_output=True, text=True, check=False, cwd=workdir, env=ENV,
     )
     assert triage.returncode == 0, triage.stderr
     assert "[parse error]" not in triage.stderr, triage.stderr

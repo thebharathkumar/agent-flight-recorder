@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from harness import normalize, run_case
 
 EVALS_DIR = Path(__file__).resolve().parent

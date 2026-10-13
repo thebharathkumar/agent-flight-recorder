@@ -12,8 +12,8 @@ import pytest
 SCRIPTS = Path(__file__).resolve().parent.parent / "skills" / "audit-log" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
-from chained_log import ChainedLogger, compute_hash  # noqa: E402
-from verify_chain import verify  # noqa: E402
+from chained_log import ChainedLogger, compute_hash
+from verify_chain import verify
 
 KEY = b"test-key"
 
@@ -96,7 +96,7 @@ def run_cli(args, env_key="test-key"):
     env = {**os.environ, "AUDIT_CHAIN_KEY": env_key}
     return subprocess.run(
         [sys.executable, str(SCRIPTS / "verify_chain.py"), *map(str, args)],
-        capture_output=True, text=True, env=env,
+        capture_output=True, text=True, check=False, env=env,
     )
 
 

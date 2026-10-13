@@ -19,7 +19,7 @@ import argparse
 import json
 import sys
 import tomllib
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 DEFAULT_ATTRIBUTES = {
@@ -141,14 +141,14 @@ def convert(
             "agent_id": str(
                 _first(attrs, attr_map["agent_id"]) or attrs.get("service.name") or "unknown"
             ),
-            "timestamp": datetime.fromtimestamp(start / 1e9, tz=timezone.utc).isoformat(),
+            "timestamp": datetime.fromtimestamp(start / 1e9, tz=UTC).isoformat(),
             "action_taken": {"tool_name": tool},
             "action_succeeded": succeeded,
             "failure_classification": (
                 None if succeeded else _classify(span, attrs, attr_map, exception_map)
             ),
             # agent-triage's schema wants whole milliseconds
-            "latency_ms": {"total": int(round((end - start) / 1e6))},
+            "latency_ms": {"total": round((end - start) / 1e6)},
         }
         if mcp_method:
             event["mcp_method"] = mcp_method

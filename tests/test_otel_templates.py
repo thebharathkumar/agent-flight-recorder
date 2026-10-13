@@ -14,9 +14,9 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "skills" / "otel-agent-tracing" / "templates"))
 sys.path.insert(0, str(ROOT / "skills" / "trace-triage" / "scripts"))
 
-from langgraph_tracing import traced_node  # noqa: E402
-from otel_setup import configure_otel  # noqa: E402
-from otlp_to_triage import convert  # noqa: E402
+from langgraph_tracing import traced_node
+from otel_setup import configure_otel
+from otlp_to_triage import convert
 
 
 @pytest.fixture(scope="module")
@@ -33,7 +33,7 @@ class ClassifiedError(RuntimeError):
 
 
 def test_traced_node_success_span(otel):
-    provider, memory, _ = otel
+    _provider, memory, _ = otel
     memory.clear()
 
     @traced_node(graph_name="demo", node_name="planner", agent_id="planner")
@@ -50,7 +50,7 @@ def test_traced_node_success_span(otel):
 
 
 def test_traced_node_failure_records_classification(otel):
-    provider, memory, _ = otel
+    _provider, memory, _ = otel
     memory.clear()
 
     @traced_node(graph_name="demo", node_name="worker", agent_id="worker")
@@ -66,7 +66,7 @@ def test_traced_node_failure_records_classification(otel):
 
 
 def test_file_exporter_output_feeds_converter(otel):
-    provider, memory, path = otel
+    provider, _memory, path = otel
     provider.force_flush()
     docs = [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
     assert docs, "file exporter wrote nothing"

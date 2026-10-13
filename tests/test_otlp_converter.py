@@ -13,12 +13,12 @@ FIXTURE = ROOT / "tests" / "fixtures" / "otlp_sample.json"
 
 sys.path.insert(0, str(SCRIPT.parent))
 
-from otlp_to_triage import convert  # noqa: E402
+from otlp_to_triage import convert
 
 
 @pytest.fixture()
 def events():
-    converted, skipped = convert(json.loads(FIXTURE.read_text()))
+    converted, _skipped = convert(json.loads(FIXTURE.read_text()))
     return converted
 
 
@@ -114,7 +114,7 @@ def test_cli_writes_ndjson_and_reports_counts(tmp_path):
     out = tmp_path / "events.ndjson"
     result = subprocess.run(
         [sys.executable, str(SCRIPT), str(FIXTURE), "-o", str(out)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, check=False,
     )
     assert result.returncode == 0, result.stderr
     lines = [json.loads(line) for line in out.read_text().splitlines()]
