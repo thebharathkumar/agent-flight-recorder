@@ -8,8 +8,8 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "skills" / "audit-log" / "scripts"))
 
-import chained_log  # noqa: E402
-from chained_log import GENESIS, ChainedLogger, canonical, compute_hash  # noqa: E402
+import chained_log
+from chained_log import GENESIS, ChainedLogger, canonical, compute_hash
 
 KEY = b"test-key"
 
@@ -36,7 +36,7 @@ def test_entries_chain_from_genesis(log):
 
 def test_hash_covers_all_metadata(log):
     """Mutating seq, ts, run_id, actor, or action invalidates the entry hash."""
-    logger, path = log
+    logger, _path = log
     entry = logger.append(actor="a", action="act", payload={"x": 1})
     body = {k: v for k, v in entry.items() if k != "entry_hash"}
     assert compute_hash(entry["prev_hash"], body, KEY) == entry["entry_hash"]

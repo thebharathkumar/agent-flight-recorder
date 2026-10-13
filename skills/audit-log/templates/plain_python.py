@@ -13,7 +13,7 @@ from pathlib import Path
 
 # Adjust this path to wherever you copied chained_log.py in your project.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
-from chained_log import ChainedLogger  # noqa: E402
+from chained_log import ChainedLogger
 
 
 def call_tool(audit: ChainedLogger, agent: str, tool: str, args: dict) -> dict:

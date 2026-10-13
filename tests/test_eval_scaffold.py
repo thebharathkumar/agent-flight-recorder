@@ -40,7 +40,7 @@ def app_copy(tmp_path):
 def run_evals(target: Path, *extra):
     return subprocess.run(
         [sys.executable, "-m", "pytest", "evals/", "-p", "no:cacheprovider", *extra],
-        capture_output=True, text=True, cwd=target, env={**os.environ},
+        capture_output=True, text=True, check=False, cwd=target, env={**os.environ},
     )
 
 
@@ -58,7 +58,7 @@ def test_scaffold_seeds_then_passes_twice(app_copy):
 
 def test_golden_drift_fails(app_copy):
     assert run_evals(app_copy, "--update-golden").returncode == 0
-    golden = sorted((app_copy / "evals" / "golden").glob("*.json"))[0]
+    golden = min((app_copy / "evals" / "golden").glob("*.json"))
     golden.write_text(golden.read_text().replace("summary", "SUMMARY"))
     result = run_evals(app_copy)
     assert result.returncode != 0

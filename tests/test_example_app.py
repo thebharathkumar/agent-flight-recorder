@@ -11,7 +11,7 @@ APP = ROOT / "examples" / "two-agent-app" / "app.py"
 
 sys.path.insert(0, str(ROOT / "skills" / "audit-log" / "scripts"))
 
-from verify_chain import verify  # noqa: E402
+from verify_chain import verify
 
 
 def run_app(tmp_path, *args):
@@ -19,7 +19,7 @@ def run_app(tmp_path, *args):
     env = {**os.environ, "AUDIT_CHAIN_KEY": "example-key"}
     return subprocess.run(
         [sys.executable, str(APP), *args],
-        capture_output=True, text=True, cwd=tmp_path, env=env,
+        capture_output=True, text=True, check=False, cwd=tmp_path, env=env,
     )
 
 
@@ -96,7 +96,7 @@ def test_dev_key_warning_when_env_missing(tmp_path):
     env = {k: v for k, v in os.environ.items() if k != "AUDIT_CHAIN_KEY"}
     result = subprocess.run(
         [sys.executable, str(APP), "--runs", "1", "--audit"],
-        capture_output=True, text=True, cwd=tmp_path, env=env,
+        capture_output=True, text=True, check=False, cwd=tmp_path, env=env,
     )
     assert result.returncode == 0
     assert "WARNING" in result.stderr

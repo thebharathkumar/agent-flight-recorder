@@ -28,7 +28,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO_ROOT / "skills" / "audit-log" / "scripts"))
 sys.path.insert(0, str(REPO_ROOT / "skills" / "otel-agent-tracing" / "templates"))
 
-from stub_llm import ScriptedLLM  # noqa: E402
+from stub_llm import ScriptedLLM
 
 TURNS_PER_RUN = 3
 QUESTIONS = ["release notes", "error budget", "user churn"]
@@ -144,7 +144,7 @@ def main() -> int:
             try:
                 app.invoke(state)
                 outcomes.append(f"turn{turn}=ok")
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001  any injected agent failure is recorded, not raised
                 classification = getattr(exc, "classification", None) or {
                     TimeoutError: "information_lag",
                     ValueError: "agent_error",

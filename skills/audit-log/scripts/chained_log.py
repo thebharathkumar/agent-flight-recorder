@@ -19,7 +19,7 @@ import hmac
 import json
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 GENESIS = "0" * 64
@@ -48,7 +48,7 @@ def load_key(env_var: str = "AUDIT_CHAIN_KEY") -> bytes:
 
 
 def _now_iso() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
 
 class ChainedLogger:
